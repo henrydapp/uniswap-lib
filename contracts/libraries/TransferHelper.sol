@@ -39,4 +39,23 @@ library TransferHelper {
         (bool success, ) = to.call{value: value}(new bytes(0));
         require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
     }
+
+    function safeBurn(
+        address token,
+        uint256 value
+    ) internal {
+        // bytes4(keccak256(bytes('burn(uint256)')));
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x42966c68, value));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: BURN_FAILED');
+    }
+
+    function safeBurnFrom(
+        address token,
+        address from,
+        uint256 value
+    ) internal {
+        // bytes4(keccak256(bytes('burnFrom(address,uint256)')));
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x79cc6790, from, value));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: BURN_FROM_FAILED');
+    }
 }
